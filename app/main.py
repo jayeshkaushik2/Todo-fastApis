@@ -2,9 +2,10 @@ from fastapi import FastAPI, HTTPException
 from .schemas import Task, TaskStatus, TaskUpdate
 from datetime import datetime
 from uuid import uuid4
+import datetime as tz
 
 app = FastAPI()
-TASKS = {}
+TASKS: list[Task] = []
 
 
 def get_task(task_id: str):
@@ -14,23 +15,24 @@ def get_task(task_id: str):
     raise HTTPException(status_code=404, detail="Task not found")
 
 
-@app.get("/", response_model=list[Task])
-async def index():
-    return list(TASKS.values())
+@app.get("/tasks", response_model=list[Task])
+async def tasks_list():
+    return TASKS
+
+
+@app.post("/tasks", response_model=Task)
+async def create_task(
+    task: Task,
+):
+    global TASKS
+    task.id = uuid4().hex
+    TASKS.append(task)
+    return task
 
 
 @app.get("/tasks/{task_id}", response_model=Task)
 async def task_detail(task_id: str):
     return get_task(task_id)
-
-
-@app.post("/tasks/", response_model=Task)
-async def create_task(
-    task: Task,
-):
-    task.id = uuid4().hex
-    TASKS.append(task)
-    return task
 
 
 @app.patch("/tasks/{task_id}", response_model=Task)
@@ -45,7 +47,7 @@ async def update_task(task_id: str, updated: TaskUpdate):
         task.status = updated.status
 
         if task.status == TaskStatus.in_progress:
-            task.started_at = datetime.utcnow()
+            task.started_at = datetime.now(tz.timezone.utc)
         elif task.status == TaskStatus.completed:
-            task.completed_at = datetime.utcnow()
+            task.completed_at = datetime.now(tz.timezone.utc)
     return task
