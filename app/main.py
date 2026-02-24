@@ -4,7 +4,8 @@ from datetime import datetime
 from uuid import uuid4
 
 app = FastAPI()
-TASKS: list[Task] = []
+TASKS = {}
+
 
 def get_task(task_id: str):
     for task in TASKS:
@@ -12,9 +13,11 @@ def get_task(task_id: str):
             return task
     raise HTTPException(status_code=404, detail="Task not found")
 
+
 @app.get("/", response_model=list[Task])
 async def index():
     return list(TASKS.values())
+
 
 @app.get("/tasks/{task_id}", response_model=Task)
 async def task_detail(task_id: str):
@@ -22,10 +25,13 @@ async def task_detail(task_id: str):
 
 
 @app.post("/tasks/", response_model=Task)
-async def create_task(task: Task, ):
+async def create_task(
+    task: Task,
+):
     task.id = uuid4().hex
     TASKS.append(task)
     return task
+
 
 @app.patch("/tasks/{task_id}", response_model=Task)
 async def update_task(task_id: str, updated: TaskUpdate):

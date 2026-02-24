@@ -10,6 +10,12 @@ if [[ "$1" == "prod" ]]; then
     fastapi run app/main.py
 fi
 
-if [[ "$1" == "package" ]] then
+if [[ "$1" == "package" ]]; then
     pip-compile requirements.in > requirements.txt
+fi
+
+if [[ "$1" == "format" ]]; then
+    # isort app
+    black app
+    # autoflake app
 fi

@@ -3,6 +3,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
+
 class TaskStatus(str, Enum):
     pending = "pending"
     in_progress = "in_progress"
@@ -11,7 +12,7 @@ class TaskStatus(str, Enum):
 
 class User(BaseModel):
     name: str
-    email:EmailStr
+    email: EmailStr
     is_active: bool = True
 
 
@@ -19,6 +20,7 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     status: Optional[TaskStatus] = None
+
 
 class Task(BaseModel):
     id: str | None = None
