@@ -1,11 +1,24 @@
-# models.py
-from sqlalchemy import Column, Integer, String
-from db import Base
+from sqlalchemy import Column, String, Enum as SAEnum
+from .base_model import BaseModel
+from .model_mixins import TimeStampMixin
+from enum import Enum
 
 
-class User(Base):
-    __tablename__ = "users"
+class TaskStatus(str, Enum):
+    pending = "pending"
+    in_progress = "in_progress"
+    completed = "completed"
 
-    id = Column(Integer, primary_key=True, index=True)
+
+class Task(TimeStampMixin, BaseModel):
+    __tablename__ = "tasks"
+
     name = Column(String, nullable=False)
-    email = Column(String, unique=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    status = Column(
+        SAEnum(TaskStatus, name="task_status_enum"),
+        nullable=False,
+        default=TaskStatus.pending,
+        server_default=TaskStatus.pending.value,
+    )

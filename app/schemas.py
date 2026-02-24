@@ -1,7 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 
 class TaskStatus(str, Enum):
@@ -17,9 +16,9 @@ class User(BaseModel):
 
 
 class TaskUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    status: Optional[TaskStatus] = None
+    title: str | None = None
+    description: str | None = None
+    status: TaskStatus | None = None
 
 
 class Task(BaseModel):
