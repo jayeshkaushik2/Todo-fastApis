@@ -2,7 +2,7 @@
 import uuid
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import UUID
-from db import Base
+from .db import Base
 from sqlalchemy import Column, DateTime
 from sqlalchemy.sql import func
 

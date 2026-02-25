@@ -1,26 +1,23 @@
 # services.py
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models import User
-from schemas import UserCreate
+from .models import Task
+from .schemas import TaskSchema
 
 
-async def create_user(db: AsyncSession, user_data: UserCreate):
-    result = await db.execute(select(User).where(User.email == user_data.email))
-    existing_user = result.scalars().first()
-
-    if existing_user:
-        raise ValueError("Email already registered")
-
-    new_user = User(name=user_data.name, email=user_data.email)
-
-    db.add(new_user)
+async def create_task(db: AsyncSession, data: TaskSchema):
+    new_row = Task(title=data.title, description=data.description, status=data.status)
+    db.add(new_row)
     await db.commit()
-    await db.refresh(new_user)
+    await db.refresh(new_row)
+    return new_row
 
-    return new_user
 
-
-async def get_user(db: AsyncSession, user_id: int):
-    result = await db.execute(select(User).where(User.id == user_id))
+async def get_task(db: AsyncSession, task_id: str):
+    result = await db.execute(select(Task).where(Task.id == task_id))
     return result.scalars().first()
+
+
+async def get_tasks(db: AsyncSession, skip: int = 0, limit: int = 100):
+    result = await db.execute(select(Task).offset(skip).limit(limit))
+    return result.scalars().all()

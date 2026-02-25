@@ -21,7 +21,7 @@ class TaskUpdate(BaseModel):
     status: TaskStatus | None = None
 
 
-class Task(BaseModel):
+class TaskSchema(BaseModel):
     id: str | None = None
     title: str
     description: str

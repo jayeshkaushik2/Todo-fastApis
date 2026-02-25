@@ -3,3 +3,4 @@ SQLAlchemy
 # formatting
 autoflake
 black
+python-decouple
